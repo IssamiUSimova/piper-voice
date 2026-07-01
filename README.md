@@ -1,85 +1,95 @@
 # Piper + ESP32 — Voz offline para o Simova Track
 
-Protótipo de **voz offline em português** para o Simova Track, combinando o **Piper TTS** (síntese de voz por IA, rodando em um notebook) com um **ESP32** que recebe o áudio já pronto e o reproduz em campo — sem depender de internet.
+Protótipo de **voz on-device em português** para o Simova Track v2, usando o **Piper TTS** (síntese de voz por IA) rodando no notebook do técnico e um **ESP32** que recebe o áudio e reproduz no alto-falante — sem depender de internet.
 
-## A ideia em uma frase
-
-O notebook do técnico (que ele já carrega em campo) gera a fala com IA usando o Piper, e o ESP32 só recebe esse áudio por uma rede Wi-Fi própria (criada pelo próprio dispositivo, sem roteador) e toca no alto-falante.
-
-## Por que essa abordagem
-
-Rodar um modelo de TTS neural (qualidade de voz natural) diretamente em um microcontrolador como o ESP32 não é viável — esse tipo de modelo precisa de mais poder de processamento (classe Raspberry Pi pra cima). Em vez de comprometer a qualidade da voz com soluções 100% embarcadas (robóticas), aproveitamos que o técnico de campo sempre tem um notebook por perto:
-
-- O **notebook** faz o trabalho pesado (Piper TTS, offline, voz natural em PT-BR)
-- O **ESP32** faz só o que ele faz bem: rede Wi-Fi e áudio via I2S
-
-Isso também reaproveita um padrão que a empresa já usa em outro produto (mesma placa/componentes do Simova Track): o dispositivo cria sua própria rede Wi-Fi (modo *Access Point*) para ser acessado offline, sem depender de roteador ou internet no local.
-
-## Arquitetura
+## Como funciona
 
 ```
 Notebook do técnico                          ESP32 (Simova Track)
-┌─────────────────────┐                      ┌──────────────────────┐
-│ texto → Piper TTS     │  Wi-Fi local (AP)    │ recebe áudio via HTTP │
-│ gera áudio (WAV)      │ ───────────────────> │ toca via I2S          │
-│                       │                      │ (MAX98357A + falante) │
-└─────────────────────┘                      └──────────────────────┘
+┌──────────────────────┐  Wi-Fi do ESP32     ┌─────────────────────┐
+│ texto → Piper TTS    │ ──────────────────> │ recebe áudio (HTTP) │
+│ gera áudio (WAV)     │  (sem roteador,     │ toca via I2S        │
+│ 100% offline         │   sem internet)     │ (MAX98357A + falante)│
+└──────────────────────┘                     └─────────────────────┘
 ```
 
-1. O ESP32 cria sua própria rede Wi-Fi (SoftAP) — não precisa de roteador nem internet.
-2. O notebook conecta nessa rede.
-3. Um script no notebook recebe um texto, gera o áudio com o Piper (modelo de voz em português), e envia esse áudio para o ESP32.
-4. O ESP32 recebe e toca o áudio direto no alto-falante via I2S.
+O ESP32 não processa nenhuma linguagem — apenas recebe bytes de áudio prontos e envia ao amplificador. O Piper é quem gera a voz, no notebook.
 
-## Hardware
+## Offline
 
-- ESP32 (mesma placa/componentes do Simova Track)
-- Amplificador de áudio I2S **MAX98357A**
-- Alto-falante 4-8 Ohms
-- Pinos I2S de referência: BCK = GPIO 26, WS = GPIO 25, DATA = GPIO 22
+| Etapa | Precisa de internet? |
+|---|---|
+| Instalar dependências (`pip install`) | Sim — uma única vez |
+| Baixar o modelo de voz (~63 MB) | Sim — uma única vez |
+| Usar em campo | **Não — 100% offline** |
 
-## Status do projeto
+O setup é feito no escritório. Em campo, tudo roda sem conexão.
 
-🚧 Em desenvolvimento inicial. Veja o [CLAUDE.md](./CLAUDE.md) para o plano técnico completo, decisões de arquitetura e fases de implementação.
+## Como rodar (lado notebook)
+
+**Windows:**
+```bat
+cd notebook
+.\run.bat
+```
+
+**Linux / macOS** (dar permissão uma vez):
+```bash
+cd notebook
+chmod +x run.sh
+./run.sh
+```
+
+Na **primeira execução**: instala as dependências e baixa o modelo de voz automaticamente.
+
+A partir daí, abre o **modo demo** — você digita qualquer frase e ouve pelo alto-falante do notebook:
+```
+--- Modo demo Simova Track ---
+>>> Velocidade máxima excedida.
+>>> Ignição desligada.
+>>> (Enter para sair)
+```
+
+### Outros modos
+
+```bat
+# Gerar e ouvir todas as frases do produto
+.\run.bat --list-frases --play
+
+# Sintetizar uma frase e ouvir
+.\run.bat "Sinal de GPS perdido." --play
+
+# Salvar em arquivo sem tocar
+.\run.bat "Acesso liberado." --output acesso.wav
+```
 
 ## Estrutura do repositório
 
 ```
-/firmware     → código do ESP32 (ESP-IDF / Arduino)
-/notebook     → script(s) que rodam no notebook do técnico (Piper TTS + envio de áudio)
+/notebook     → script do notebook (Piper TTS + demo + envio para ESP32)
+/firmware     → firmware do ESP32 (a implementar)
+/docs         → documentação técnica e análise de arquitetura
 ```
 
-> Estrutura ainda sendo montada — este README será atualizado conforme o código for adicionado.
+## Status
 
-## Como rodar (em construção)
+| Fase | Status |
+|---|---|
+| Fase 1 — Piper no notebook, qualidade de voz validada | ✅ Concluída |
+| Fase 2 — Firmware ESP32: SoftAP + servidor HTTP | ⬜ A fazer |
+| Fase 3 — ESP32 recebe WAV e toca via I2S | ⬜ A fazer |
+| Fase 4 — Fluxo completo ponta a ponta | ⬜ A fazer |
+| Fase 5 — Testes de campo | ⬜ A fazer |
 
-### Lado notebook (Piper)
+## Hardware (para as próximas fases)
 
-```bash
-pip install piper-tts
-# baixar um modelo de voz em português antes de ir a campo (único passo que precisa de internet)
-```
+- ESP32 (placa de desenvolvimento)
+- Amplificador I2S **MAX98357A**
+- Alto-falante 4–8 Ohms
+- Pinos I2S de referência: BCK = GPIO 26, WS = GPIO 25, DATA = GPIO 22
 
-Instruções completas de uso do script de geração/envio de áudio serão adicionadas conforme implementadas.
+## Documentação
 
-### Lado ESP32 (firmware)
-
-Instruções de build e flash serão adicionadas conforme o firmware for implementado.
-
-## Plano de testes
-
-O desenvolvimento segue fases incrementais (detalhadas no `CLAUDE.md`):
-
-1. Validar a qualidade de voz do Piper em PT-BR, isoladamente
-2. ESP32 criando sua própria rede Wi-Fi (SoftAP)
-3. ESP32 tocando um áudio fixo recebido pela rede
-4. Fluxo completo: texto → Piper → ESP32 fala
-5. Teste de campo simulado (interferência, reconexão, consumo de energia)
-
-## Alternativa avaliada (fallback)
-
-Caso esta abordagem não atenda aos requisitos de latência ou praticidade em campo, existe uma alternativa 100% standalone (sem depender de notebook): compilar o **eSpeak-NG** diretamente no ESP32. A qualidade de voz é mais robótica, mas funciona sem nenhum dispositivo auxiliar. Essa rota está documentada no `CLAUDE.md`, mas não é o foco deste repositório.
-
-## Origem do projeto
-
-Este projeto nasceu de uma investigação sobre viabilidade de voz offline para o Simova Track v2 (track com leitor de cartão), a pedido do Fabio. Mais contexto no `CLAUDE.md`.
+- [Visão geral e decisão de arquitetura](./docs/visao-geral.md)
+- [Detalhes técnicos do Piper](./docs/piper-notebook.md)
+- [Alternativas avaliadas](./docs/alternativas.md)
