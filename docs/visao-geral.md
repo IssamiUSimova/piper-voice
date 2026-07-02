@@ -46,7 +46,7 @@ MAX98357A → Alto-falante
 | Qualidade de voz | Voz neural natural em PT-BR — a melhor possível |
 | Síntese ao vivo | Qualquer texto, gerado na hora |
 | Offline | 100% — modelo baixado uma única vez com internet |
-| Custo extra no produto | ~US$1–3 (MAX98357A + speaker) |
+| Custo extra no produto | ~R$30–45 (MAX98357A ~R$20 + speaker ~R$10–25) |
 | Complexidade | Baixa — ESP32 só toca áudio, não processa linguagem |
 | Dependência | Notebook do técnico (que já carrega em campo) |
 
@@ -58,10 +58,10 @@ MAX98357A → Alto-falante
 
 | Abordagem | Qualidade PT-BR | Síntese ao vivo | Custo extra/unidade | Standalone |
 |---|---|---|---|---|
-| **Piper + notebook** ← recomendado | ★★★★★ | ✓ | ~US$1–3 | ✗ requer notebook |
-| Pré-gravado em flash/SD | ★★★★★ | ✗ frases fixas | ~US$1–3 | ✓ |
-| eSpeak-NG no ESP32 | ★★☆☆☆ robótico | ✓ | US$0 | ✓ |
-| RPi Zero 2W + Piper | ★★★★★ | ✓ | ~US$15–35 | ✓ |
+| **Piper + notebook** ← recomendado | ★★★★★ | ✓ | ~R$30–45 | ✗ requer notebook |
+| Pré-gravado em flash/SD | ★★★★★ | ✗ frases fixas | ~R$30–45 | ✓ |
+| eSpeak-NG no ESP32 | ★★☆☆☆ robótico | ✓ | ~R$30–45 | ✓ |
+| RPi Zero 2W + Piper | ★★★★★ | ✓ | ~R$405–435 | ✓ |
 
 Para detalhes completos de cada alternativa, veja [alternativas.md](./alternativas.md).  
 Para detalhes técnicos do Piper, veja [piper-notebook.md](./piper-notebook.md).

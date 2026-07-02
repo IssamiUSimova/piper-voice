@@ -36,7 +36,7 @@ ESP32 lê o WAV do SD card → MAX98357A → alto-falante
 | | |
 |---|---|
 | ✓ | Qualidade de voz máxima (gerado com Piper) |
-| ✓ | Custo baixíssimo (~US$1–3 por unidade) |
+| ✓ | Custo baixo (~R$35–50 por unidade — MAX98357A + speaker) |
 | ✓ | Standalone — não depende de notebook em campo |
 | ✓ | Simples de implementar e manter |
 | ✗ | Não é síntese ao vivo — frases fixas apenas |
@@ -46,8 +46,9 @@ ESP32 lê o WAV do SD card → MAX98357A → alto-falante
 
 | Componente | Custo estimado |
 |---|---|
-| MAX98357A | ~US$0,50–1,00 (mesmo da abordagem Piper) |
-| Alto-falante 4–8 Ohms | ~US$0,50–2,00 |
+| MAX98357A | ~R$20 — [AutoCore](https://www.autocorerobotica.com.br/modulo-amplificador-de-audio-i2s-max98357) / [SmartKits](https://www.smartkits.com.br/modulo-amplificador-de-audio-i2s-max98357) / [Mercado Livre](https://produto.mercadolivre.com.br/MLB-3224512093-amplificador-de-audio-max98357-max98357a-i2s-esp32-raspberry-_JM) |
+| Alto-falante 4–8 Ohms | ~R$10–25 — [Mercado Livre](https://lista.mercadolivre.com.br/mini-alto-falante-8-ohms) |
+| MAX98357A + speaker (kit) | Opção kit com tudo junto — [Mercado Livre](https://www.mercadolivre.com.br/amplificador-dac-max98357-alto-falante-50mm-4-3w/p/MLB2019741487) |
 | SD card | já existe no Simova Track |
 
 ---
@@ -120,7 +121,7 @@ Texto → ESP32 → RPi Zero 2W (Piper) → áudio → alto-falante
 | ✓ | Qualidade de voz idêntica ao Piper no notebook |
 | ✓ | Síntese ao vivo de qualquer texto |
 | ✓ | 100% standalone e offline |
-| ✗ | Custo extra de ~US$15–35 por unidade de produto |
+| ✗ | Custo extra de ~R$405–435 por unidade de produto (RPi ~R$350 + MAX98357A + speaker) |
 | ✗ | Maior tamanho físico — precisa de espaço na PCB ou caixa |
 | ✗ | Consumo extra de ~1,5W |
 | ✗ | Boot de ~20s a frio — requer considerar estratégia de ligar/desligar |
@@ -130,9 +131,9 @@ Texto → ESP32 → RPi Zero 2W (Piper) → áudio → alto-falante
 
 | Componente | Custo estimado |
 |---|---|
-| Raspberry Pi Zero 2W | US$15 (oficial) / R$120–180 no Brasil |
-| Cartão microSD (sistema) | R$25–40 |
-| MAX98357A + speaker | R$10–20 |
+| Raspberry Pi Zero 2W | ~R$350 — [Saravati R$354,90](https://www.saravati.com.br/placa-raspberry-pi-zero-2-w-quad-core-64-bit-arm-c-pinos.html) / [Mercado Livre](https://lista.mercadolivre.com.br/raspberry-pi-zero-2w) |
+| Cartão microSD (sistema) | ~R$25–40 |
+| MAX98357A + speaker | ~R$30–45 (ver links acima) |
 
 ---
 

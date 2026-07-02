@@ -164,11 +164,12 @@ Interferência de outras redes Wi-Fi, reconexão após reinicialização, consum
 | Componente | Função | Custo estimado (volume) |
 |---|---|---|
 | ESP32 | Rede Wi-Fi + servidor HTTP + I2S | já no produto |
-| MAX98357A | Amplificador I2S classe D, 3W | ~US$0,50–1,00 |
-| Alto-falante 4–8 Ohms | Reprodução | ~US$0,50–2,00 |
+| MAX98357A | Amplificador I2S classe D, 3W | ~R$20 ([AutoCore](https://www.autocorerobotica.com.br/modulo-amplificador-de-audio-i2s-max98357) / [SmartKits](https://www.smartkits.com.br/modulo-amplificador-de-audio-i2s-max98357) / [Mercado Livre](https://produto.mercadolivre.com.br/MLB-3224512093-amplificador-de-audio-max98357-max98357a-i2s-esp32-raspberry-_JM)) |
+| Alto-falante 4–8 Ohms | Reprodução | ~R$10–25 ([Mercado Livre](https://lista.mercadolivre.com.br/mini-alto-falante-8-ohms)) |
+| MAX98357A + speaker (kit) | Amplificador + alto-falante 50mm 4Ω já juntos | [Mercado Livre](https://www.mercadolivre.com.br/amplificador-dac-max98357-alto-falante-50mm-4-3w/p/MLB2019741487) |
 | Notebook do técnico | Rodar o Piper TTS | já existe em campo |
 
-**Custo extra por unidade de produto: ~US$1–3.**
+**Custo extra por unidade de produto: ~R$30–45.**
 
 ### Atenção: restrição de pinos no hardware v1.6.0
 
