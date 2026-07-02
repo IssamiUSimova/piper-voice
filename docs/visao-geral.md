@@ -83,14 +83,4 @@ O hardware atual (v1.6.0) tem apenas **GPIO23 e GPIO33 livres como saídas**. Um
 
 ---
 
-## Estado atual do projeto
-
-- [x] Piper instalado e validado no notebook — qualidade de voz aprovada
-- [ ] Firmware ESP32: modo SoftAP + servidor HTTP
-- [ ] ESP32 recebe WAV e toca via I2S
-- [ ] Fluxo completo ponta a ponta
-- [ ] Testes de campo
-
----
-
 *Investigação iniciada a pedido do Fabio. Desenvolvimento: Italo.*

@@ -143,20 +143,6 @@ Frases geradas e validadas:
 
 ---
 
-## Próximas fases
-
-### Fase 2 — Firmware ESP32: modo SoftAP + servidor HTTP
-O ESP32 cria sua própria rede Wi-Fi (SoftAP) e sobe um servidor HTTP com um endpoint `/say` que recebe o arquivo WAV. Este servidor é escrito do zero — o firmware atual do Simova Track não possui servidor HTTP local nem reprodução de áudio. O projeto de referência `esp32-flite` serve de base.
-
-### Fase 3 — ESP32 toca o WAV recebido via I2S
-O firmware recebe os bytes do POST e os envia para o MAX98357A via I2S.
-
-### Fase 4 — Fluxo completo ponta a ponta
-Script no notebook envia texto → Piper gera → envia para ESP32 → ESP32 fala. Teste de latência e alcance da rede SoftAP.
-
-### Fase 5 — Testes de campo simulado
-Interferência de outras redes Wi-Fi, reconexão após reinicialização, consumo de energia.
-
 ---
 
 ## Requisitos de hardware

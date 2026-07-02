@@ -97,54 +97,13 @@ Para o protótipo com hardware de desenvolvimento (não a PCB do Simova Track), 
 
 ## Estado atual do projeto
 
-- [x] **Fase 1 concluída:** Piper instalado no notebook, modelo PT-BR baixado, frases do produto geradas e validadas. Script `notebook/say.py` operacional com modo demo interativo.
-- [ ] Fase 2: Firmware ESP32 — modo SoftAP + servidor HTTP
-- [ ] Fase 3: ESP32 recebe WAV e reproduz via I2S
-- [ ] Fase 4: Fluxo completo ponta a ponta
-- [ ] Fase 5: Testes de campo
+Piper instalado no notebook, modelo `pt_BR-faber-medium` baixado, frases reais do produto geradas e validadas. Script `notebook/say.py` operacional com modo demo interativo — qualquer texto digitado é sintetizado e reproduzido pelo alto-falante do notebook em tempo real, offline.
 
-## Plano de implementação (fases)
+O próximo passo é o firmware do ESP32 (SoftAP + servidor HTTP + reprodução via I2S), a ser desenvolvido quando os componentes de hardware estiverem disponíveis: ESP32 de desenvolvimento + MAX98357A + mini alto-falante.
 
-### Fase 1 — Validar o Piper sozinho no notebook (sem ESP32) ✅ Concluída
-- Piper instalado via `piper-tts`, modelo `pt_BR-faber-medium` baixado
-- Frases reais do produto geradas: alertas de velocidade, estados operacionais, ignição, erros de GPS/SD/CAN
-- Modo demo interativo: digita qualquer texto e ouve pelo alto-falante do notebook
-- Critério de sucesso atingido: qualidade de voz neural aprovada
+## Alternativa de fallback
 
-### Fase 2 — ESP32 em modo SoftAP
-- Adaptar o firmware (`main.c` do `esp32-flite` como ponto de partida) trocando `WiFi.begin()` (modo estação) por `WiFi.softAP()`
-- Manter o servidor HTTP existente rodando na rede própria
-- Critério de sucesso: notebook consegue conectar na rede do ESP32 e acessar seu IP (geralmente `192.168.4.1`)
-
-### Fase 3 — Tocar um áudio fixo enviado pelo notebook
-- Notebook envia um WAV qualquer (não precisa ser do Piper ainda) via HTTP POST para o ESP32
-- Firmware recebe os bytes e toca via I2S (adaptar `i2s_stream_chunk()` existente)
-- Critério de sucesso: áudio sai no alto-falante, vindo da rede
-
-### Fase 4 — Fluxo completo: texto → Piper → ESP32 fala
-- Script no notebook: recebe texto → gera áudio com Piper → envia para o ESP32
-- Testar latência (tempo entre "texto digitado" e "som sai no alto-falante")
-- Testar com frases curtas e longas
-- Testar alcance físico da rede SoftAP
-- Critério de sucesso: fluxo completo funcionando, ponta a ponta, offline
-
-### Fase 5 — Teste de campo simulado
-- Testar com interferência de outras redes Wi-Fi por perto
-- Testar reconexão do notebook após reiniciar o ESP32
-- Medir consumo de energia/bateria do ESP32 durante reprodução de áudio
-- Levantar lista de frases padrão do produto para já deixar testadas
-
-## Decisões em aberto / perguntas para revisitar
-
-- Qual formato de transporte de áudio usar primeiro: WAV completo via HTTP POST, ou streaming PCM via socket?
-- O ESP32 deve ficar em modo SoftAP puro, ou modo dual (AP + STA), permitindo também conectar a uma rede existente quando disponível?
-- Qual(is) modelo(s) de voz Piper em PT-BR usar (qualidade vs tamanho do modelo)?
-- Vale a pena ter uma lista fixa de frases pré-geradas em cache no notebook, para reduzir latência de frases repetidas (ex: "Acesso liberado")?
-- Autenticação/segurança da rede SoftAP do Simova Track (mesmo padrão do aparelho irmão, a definir com o time)?
-
-## Alternativa de fallback (não esquecer)
-
-Se a abordagem Piper + notebook não atingir os requisitos de latência ou usabilidade em campo, a alternativa validada é compilar o **arduino-espeak-ng diretamente no ESP32** — síntese standalone, sem depender de notebook, com qualidade de voz mais robótica mas suporte a português e funcionando 100% dentro do dispositivo. Essa rota está documentada separadamente e não faz parte do escopo deste repositório, mas deve ser considerada caso este protótipo não avance.
+Se a abordagem Piper + notebook não atender os requisitos, a alternativa é compilar o **arduino-espeak-ng diretamente no ESP32** — síntese standalone, voz mais robótica mas zero dependência externa. Documentada em `docs/alternativas.md`.
 
 ## Referências técnicas
 

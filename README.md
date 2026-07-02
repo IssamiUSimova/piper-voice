@@ -66,20 +66,9 @@ A partir daí, abre o **modo demo** — você digita qualquer frase e ouve pelo 
 ## Estrutura do repositório
 
 ```
-/notebook     → script do notebook (Piper TTS + demo + envio para ESP32)
-/firmware     → firmware do ESP32 (a implementar)
+/notebook     → script do notebook (Piper TTS + demo)
 /docs         → documentação técnica e análise de arquitetura
 ```
-
-## Status
-
-| Fase | Status |
-|---|---|
-| Fase 1 — Piper no notebook, qualidade de voz validada | ✅ Concluída |
-| Fase 2 — Firmware ESP32: SoftAP + servidor HTTP | ⬜ A fazer |
-| Fase 3 — ESP32 recebe WAV e toca via I2S | ⬜ A fazer |
-| Fase 4 — Fluxo completo ponta a ponta | ⬜ A fazer |
-| Fase 5 — Testes de campo | ⬜ A fazer |
 
 ## Hardware (para as próximas fases)
 
