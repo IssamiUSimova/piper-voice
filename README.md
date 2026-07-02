@@ -83,10 +83,15 @@ A partir daí, abre o **modo demo** — você digita qualquer frase e ouve pelo 
 
 ## Hardware (para as próximas fases)
 
-- ESP32 (placa de desenvolvimento)
-- Amplificador I2S **MAX98357A**
-- Alto-falante 4–8 Ohms
-- Pinos I2S de referência: BCK = GPIO 26, WS = GPIO 25, DATA = GPIO 22
+| Componente | Função | Preço estimado |
+|---|---|---|
+| ESP32 (placa de desenvolvimento) | MCU + Wi-Fi + I2S | já disponível |
+| [MAX98357A](https://produto.mercadolivre.com.br/MLB-3224512093-amplificador-de-audio-max98357-max98357a-i2s-esp32-raspberry-_JM) | Amplificador I2S classe D, 3W | ~R$20 |
+| Mini alto-falante 8 Ohms 40mm | Reprodução de áudio | ~R$10–15 |
+
+> O Simova Track atual não possui hardware de áudio além do buzzer piezo — MAX98357A e alto-falante precisam ser adicionados.
+
+Pinos I2S para o protótipo (placa de dev genérica): BCK = GPIO 26, WS = GPIO 25, DATA = GPIO 22.
 
 ## Documentação
 
