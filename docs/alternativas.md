@@ -11,16 +11,16 @@ Cada alternativa abaixo existe para um cenário específico. Nenhuma supera o Pi
 
 ### Como funciona
 
-As frases são geradas com o Piper no escritório (com toda a qualidade neural), convertidas para MP3 ou WAV, e armazenadas na memória flash do ESP32 ou em um cartão SD. Em campo, o firmware toca o arquivo correspondente ao evento.
+As frases são geradas com o Piper no escritório (com toda a qualidade neural), convertidas para WAV, e armazenadas no cartão SD do próprio Simova Track (que já existe no hardware). Em campo, o firmware toca o arquivo correspondente ao evento.
 
-Ferramenta sugerida para reprodução: **DFPlayer Mini** (~R$15 no Mercado Livre) — módulo simples, amplificador integrado, controlado via UART pelo ESP32.
+O hardware de reprodução é **exatamente o mesmo** da abordagem Piper — MAX98357A + alto-falante. A única diferença é a origem do áudio: em vez de vir do notebook pela rede, vem do SD card local.
 
 ```
 [Escritório — uma vez]
-Piper → frases.wav → armazenar em SD card / flash
+Piper → frases.wav → copiar para o SD card
 
 [Campo — sempre]
-ESP32 → DFPlayer Mini → alto-falante
+ESP32 lê o WAV do SD card → MAX98357A → alto-falante
 (sem notebook, sem rede, sem processamento)
 ```
 
@@ -46,9 +46,9 @@ ESP32 → DFPlayer Mini → alto-falante
 
 | Componente | Custo estimado |
 |---|---|
-| DFPlayer Mini (ou WT2003S) | R$10–20 |
-| Cartão microSD | R$15–30 |
-| Alto-falante 4–8 Ohms | R$5–15 |
+| MAX98357A | ~US$0,50–1,00 (mesmo da abordagem Piper) |
+| Alto-falante 4–8 Ohms | ~US$0,50–2,00 |
+| SD card | já existe no Simova Track |
 
 ---
 
@@ -84,10 +84,13 @@ Texto → ESP32 (eSpeak-NG embarcado) → I2S → MAX98357A → alto-falante
 
 ### Hardware necessário
 
-Apenas o que já existe no produto:
-- ESP32
-- MAX98357A
-- Alto-falante
+| Componente | Situação no Simova Track atual |
+|---|---|
+| ESP32 | já existe |
+| MAX98357A | **não existe — precisa ser adicionado** |
+| Alto-falante 4–8 Ohms | **não existe — precisa ser adicionado** |
+
+> O Simova Track atual não tem nenhum hardware de áudio além do buzzer piezo (GPIO4). Qualquer abordagem que reproduza áudio real exige adicionar MAX98357A + alto-falante.
 
 ---
 
@@ -143,8 +146,8 @@ O produto precisa falar sozinho, sem notebook?
 │
 └─ SIM → As frases são fixas ou variam muito?
           │
-          ├─ FIXAS (10–30 frases) → Pré-gravado com DFPlayer Mini
-          │   Simples, barato, qualidade ótima.
+          ├─ FIXAS (10–30 frases) → Pré-gravado no SD card + MAX98357A
+          │   Simples, barato, qualidade ótima. SD card já existe no produto.
           │
           └─ VARIÁVEIS (qualquer texto)
               │

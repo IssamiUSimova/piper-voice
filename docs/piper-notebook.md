@@ -125,21 +125,28 @@ O script `notebook/say.py` já está operacional:
 ```
 
 Frases geradas e validadas:
-- "Cartão não reconhecido."
-- "Acesso liberado."
-- "Acesso negado."
-- "Aguarde, processando."
-- "Bateria fraca."
-- "Dispositivo conectado."
-- "Erro de comunicação."
-- "Operação concluída com sucesso."
+- "Atenção! Velocidade máxima excedida."
+- "Velocidade normalizada."
+- "Máquina em operação produtiva."
+- "Máquina em estado alternativo."
+- "Máquina parada."
+- "Máquina em trânsito."
+- "Ignição ligada."
+- "Ignição desligada."
+- "Sinal de GPS perdido."
+- "Erro no cartão de memória."
+- "Comunicação CAN inativa."
+- "Comunicação CAN ativa."
+- "Acesso liberado." *(v2 — leitor de cartão)*
+- "Cartão não reconhecido." *(v2)*
+- "Acesso negado." *(v2)*
 
 ---
 
 ## Próximas fases
 
 ### Fase 2 — Firmware ESP32: modo SoftAP + servidor HTTP
-O ESP32 cria sua própria rede Wi-Fi e sobe um servidor HTTP com um endpoint `/say` que recebe o arquivo WAV.
+O ESP32 cria sua própria rede Wi-Fi (SoftAP) e sobe um servidor HTTP com um endpoint `/say` que recebe o arquivo WAV. Este servidor é escrito do zero — o firmware atual do Simova Track não possui servidor HTTP local nem reprodução de áudio. O projeto de referência `esp32-flite` serve de base.
 
 ### Fase 3 — ESP32 toca o WAV recebido via I2S
 O firmware recebe os bytes do POST e os envia para o MAX98357A via I2S.

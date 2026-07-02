@@ -44,9 +44,8 @@ Foram avaliadas duas rotas de TTS offline:
    - Uma vez os modelos de voz baixados (precisa de internet só nesse passo único, feito no escritório), o Piper funciona 100% offline
    - Qualidade de voz muito superior ao eSpeak-NG (voz neural, natural, não robótica)
    - O ESP32 não precisa processar TTS — só recebe áudio já sintetizado e toca via I2S
-   - Reaproveita o padrão de rede já usado por outro produto da empresa (aparelho irmão do Simova Track, mesma placa/componentes, que já cria uma rede Wi-Fi própria e expõe uma interface web offline)
 
-**Por que essa rota foi escolhida como prioridade:** menor esforço de engenharia (reaproveita servidor HTTP e I2S que já existem no firmware atual do Simova Track), melhor qualidade de voz, e o técnico já carrega notebook em campo — não é uma dependência nova.
+**Por que essa rota foi escolhida como prioridade:** melhor qualidade de voz, e o técnico já carrega notebook em campo — não é uma dependência nova. O firmware do ESP32 (modo SoftAP + servidor HTTP + reprodução I2S) precisa ser escrito do zero para este protótipo, já que o Simova Track atual não possui nenhum desses componentes de áudio.
 
 ## Arquitetura
 
@@ -63,11 +62,11 @@ Foram avaliadas duas rotas de TTS offline:
 ```
 
 Fluxo:
-1. ESP32 sobe em modo **SoftAP** (`WiFi.softAP()`), criando uma rede própria — igual ao aparelho irmão que já faz isso para a interface web.
-2. ESP32 sobe um servidor HTTP (reaproveitando a base que já existe no firmware do Simova Track, que hoje tem um endpoint `/say` que recebe texto e sintetiza localmente com Flite).
+1. ESP32 sobe em modo **SoftAP** (`WiFi.softAP()`), criando uma rede própria sem roteador.
+2. ESP32 sobe um servidor HTTP simples com um endpoint `/say` que recebe o arquivo WAV. **Este servidor precisa ser escrito do zero** — o firmware atual do Simova Track não tem servidor HTTP local nem reprodução de áudio; ele só envia texto via BLE para o celular.
 3. Notebook conecta nessa rede.
-4. No notebook, um script/serviço recebe um texto, gera o áudio com Piper (modelo de voz PT-BR), e envia esse áudio (WAV completo via POST, ou PCM em streaming) para o ESP32.
-5. ESP32 recebe os bytes de áudio e toca direto no I2S, reaproveitando a lógica existente em `i2s_stream_chunk()` do `main.c` original — só que agora os dados vêm da rede em vez de virem do Flite local.
+4. No notebook, o script gera o áudio com Piper (modelo de voz PT-BR) e envia o WAV via HTTP POST para o ESP32.
+5. ESP32 recebe os bytes de áudio e os reproduz via I2S no MAX98357A. A lógica de reprodução I2S também precisa ser escrita do zero para este protótipo — o projeto de referência `esp32-flite` serve de base para a implementação.
 
 ### Duas formas de envio de áudio (a decidir/testar)
 
@@ -78,15 +77,15 @@ Comece pela abordagem simples (WAV completo via HTTP) e só evolua para streamin
 
 ## Hardware de referência
 
-- **MCU:** ESP32 (mesma placa/componentes do Simova Track / aparelho irmão)
-- **Amplificador de áudio:** MAX98357A (I2S, classe D, 3W) — já validado em projetos similares, compatível com ESP32 e Raspberry Pi
-- **Alto-falante:** 4-8 Ohms, compatível com o footprint do MAX98357A
-- **Pinos I2S de referência** (do firmware original, configuráveis via Kconfig):
+- **MCU:** ESP32-WROOM-32E-N16 (o mesmo chip do Simova Track), 16MB de flash
+- **Amplificador de áudio:** MAX98357A (I2S, classe D, 3W) — a ser adicionado; não existe no hardware atual do Simova Track
+- **Alto-falante:** 4–8 Ohms — a ser adicionado; não existe no hardware atual
+- **Pinos I2S para o protótipo** (placa de desenvolvimento genérica — NÃO são os pinos do Simova Track):
   - BCK (Bit Clock): GPIO 26
   - WS (Word Select / LRCK): GPIO 25
   - DATA: GPIO 22
 
-Esses pinos e o módulo de amplificador já estão validados no firmware base (`esp32-flite`) que deu origem a este projeto — reaproveitar a mesma config de I2S.
+> **Atenção:** no Simova Track v1.6.0, GPIO25 e GPIO26 são usados como INPUT1 e INPUT2 (entradas digitais optoisoladas). Esses pinos **não podem ser usados para I2S na PCB do produto**. Os pinos acima são válidos apenas para protótipos com placa de desenvolvimento ESP32 genérica.
 
 ### Restrição de pinos no hardware atual do Simova Track
 
@@ -98,15 +97,19 @@ Para o protótipo com hardware de desenvolvimento (não a PCB do Simova Track), 
 
 ## Estado atual do projeto
 
-**Repositório vazio — desenvolvimento ainda não começou.** Este CLAUDE.md documenta o plano antes do código existir.
+- [x] **Fase 1 concluída:** Piper instalado no notebook, modelo PT-BR baixado, frases do produto geradas e validadas. Script `notebook/say.py` operacional com modo demo interativo.
+- [ ] Fase 2: Firmware ESP32 — modo SoftAP + servidor HTTP
+- [ ] Fase 3: ESP32 recebe WAV e reproduz via I2S
+- [ ] Fase 4: Fluxo completo ponta a ponta
+- [ ] Fase 5: Testes de campo
 
 ## Plano de implementação (fases)
 
-### Fase 1 — Validar o Piper sozinho no notebook (sem ESP32)
-- Instalar Piper (`pip install piper-tts`)
-- Baixar modelo(s) de voz PT-BR
-- Gerar áudios de teste com frases reais do produto (ex: "Cartão não reconhecido", "Acesso liberado")
-- Critério de sucesso: qualidade de voz aprovada pela equipe
+### Fase 1 — Validar o Piper sozinho no notebook (sem ESP32) ✅ Concluída
+- Piper instalado via `piper-tts`, modelo `pt_BR-faber-medium` baixado
+- Frases reais do produto geradas: alertas de velocidade, estados operacionais, ignição, erros de GPS/SD/CAN
+- Modo demo interativo: digita qualquer texto e ouve pelo alto-falante do notebook
+- Critério de sucesso atingido: qualidade de voz neural aprovada
 
 ### Fase 2 — ESP32 em modo SoftAP
 - Adaptar o firmware (`main.c` do `esp32-flite` como ponto de partida) trocando `WiFi.begin()` (modo estação) por `WiFi.softAP()`
